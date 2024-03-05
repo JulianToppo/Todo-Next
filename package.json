@@ -1,0 +1,21 @@
+{
+  "name": "todo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.2.1",
+    "autoprefixer": "^10.4.18",
+    "next": "14.1.2",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-redux": "^9.1.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.0"
+  }
+}

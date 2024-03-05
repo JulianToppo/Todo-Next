@@ -1,0 +1,111 @@
+import { deleteTask } from "@/utils/store/tasksslice";
+import { addTask, updatecompleted } from "@/utils/store/tasksslice";
+import React from "react";
+import { useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+const Tasks = () => {
+  const [task, settask] = useState(false);
+  const taskname = useRef();
+  const taskdescription = useRef();
+  const dispatch = useDispatch();
+  const taskstore = useSelector((store) => store.tasks);
+
+  const onAddSubmit = (e) => {
+    e.preventDefault();
+    const name = taskname.current.value;
+    const desc = taskdescription.current.value;
+
+    const formobj = {
+      name: name,
+      description: desc,
+      completed: false,
+    };
+
+    dispatch(addTask({ task: formobj }));
+  };
+
+  const markcompleted = (item) => {
+    dispatch(updatecompleted({ item: item }));
+  };
+
+  const markdelete = (item) => {
+    dispatch(deleteTask({ item: item }));
+  };
+  return (
+    <div className="flex h-full items-start pt-12 justify-center">
+      <div className="bg-blue-200 w-4/6 flex items-center rounded-md justify-center p-4">
+        <div className="flex flex-col w-full space-y-3 ">
+          <h1 className="text-2xl font-semibold">Today</h1>
+
+          <div className="flex flex-col">
+            {taskstore.tasks.map((item) => {
+              return (
+                <div
+                  className="flex flex-row justify-around"
+                  key={item.name + item.desc}
+                >
+                  <div className="flex w-1/2 ">
+                    {" "}
+                    <div
+                      className="border-red-400 border-2 p-2 rounded-full w-1 h-1 bg-white hover:border-green-500 hover:bg-green-300"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        markcompleted(item);
+                      }}
+                    ></div>
+                    <p>{item.name}</p>
+                    <p>{item.completed.toString()}</p>
+                  </div>
+                  <div className="flex w-1/2 justify-end ">
+                    <button onClick={(e)=>{
+                      e.preventDefault();
+                      markdelete(item)
+                    }}>X</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="bg-white">
+            {!task && (
+              <p className="mx-4 p-2" onClick={() => settask(!task)}>
+                Add Task
+              </p>
+            )}
+            {task && (
+              <div className="flex flex-col space-x-2 space-y-3 p-2 border-solid border border-gray-500 rounded-md">
+                <input
+                  ref={taskname}
+                  className="font-medium"
+                  type="text"
+                  placeholder="Task name"
+                  required
+                ></input>
+                <input
+                  type="text"
+                  ref={taskdescription}
+                  placeholder="Description"
+                  required
+                ></input>
+                <div className="flex justify-end p-4">
+                  <button
+                    className="bg-white px-5"
+                    onClick={() => settask(!task)}
+                  >
+                    Cancel
+                  </button>
+                  <button className="bg-red-200 px-5 p-3" onClick={onAddSubmit}>
+                    Add Task
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Tasks;
