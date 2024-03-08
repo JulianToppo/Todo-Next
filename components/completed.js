@@ -1,18 +1,19 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React from "react";
+import { useSelector } from "react-redux";
 
-const Completed = () => {
-  const taskstore = useSelector((store)=>store.tasks);
-
+const Completed = (props) => {
+  const { todoItems } = props;
   return (
-    <>
-      {taskstore.tasks && taskstore.tasks.map((item) => {
-        if (item.completed) {
-          return <p key={item.id}>{item.name}</p>;
-        }
-        return null;
-      })}
-    </>
+    <div className="bg-green-400 flex w-full h-svh items-center justify-center">
+      <div className="flex flex-col w-1/2 p-7 bg-yellow-200 rounded-lg">
+        {todoItems &&
+          todoItems.map((item) => {
+            if (item.completed) {
+              return <li key={item._id}>{item.name}</li>;
+            }
+          })}
+      </div>
+    </div>
   );
 };
 

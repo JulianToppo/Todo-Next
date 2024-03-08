@@ -2,15 +2,32 @@ import { deleteTask } from "@/utils/store/tasksslice";
 import { addTask, updatecompleted } from "@/utils/store/tasksslice";
 import React from "react";
 import { useState, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-const Tasks = () => {
+
+const Tasks = (props) => {
+  const {
+    todoItems,
+    addTodoFunc,
+    deleteTodoFunc,
+    updateTodoFunc,
+    fetchTodoItemsFunc,
+  } = props.propsfunction;
+
   const [task, settask] = useState(false);
+  const [todoItemsList, setTodoItemsList] = useState(todoItems);
   const taskname = useRef();
   const taskdescription = useRef();
-  const dispatch = useDispatch();
-  const taskstore = useSelector((store) => store.tasks);
 
-  const onAddSubmit = (e) => {
+  const getData=async ()=>{
+    const items = await fetchTodoItemsFunc();
+    const formatteditems = items.map((item) => ({
+      _id: item._id.toString(),
+      name: item.name,
+      desc: item.description,
+      completed: item.completed,
+    }));
+    setTodoItemsList(formatteditems);
+  }
+  const onAddSubmit = async (e) => {
     e.preventDefault();
     const name = taskname.current.value;
     const desc = taskdescription.current.value;
@@ -21,15 +38,22 @@ const Tasks = () => {
       completed: false,
     };
 
-    dispatch(addTask({ task: formobj }));
+    console.log(formobj);
+
+    await addTodoFunc(formobj);
+
+   await getData()
   };
 
-  const markcompleted = (item) => {
-    dispatch(updatecompleted({ item: item }));
+  const markcompleted = async(item) => {
+   await updateTodoFunc(item._id);
+  
   };
 
-  const markdelete = (item) => {
-    dispatch(deleteTask({ item: item }));
+  const markdelete = async(item) => {
+    await deleteTodoFunc(item._id);
+    await getData()
+    
   };
   return (
     <div className="flex h-full items-start pt-12 justify-center">
@@ -38,11 +62,11 @@ const Tasks = () => {
           <h1 className="text-2xl font-semibold">Today</h1>
 
           <div className="flex flex-col">
-            {taskstore.tasks.map((item) => {
+            {todoItemsList.map((item) => {
               return (
                 <div
                   className="flex flex-row justify-around"
-                  key={item.name + item.desc}
+                  key={item._id}
                 >
                   <div className="flex w-1/2 ">
                     {" "}
@@ -57,10 +81,14 @@ const Tasks = () => {
                     <p>{item.completed.toString()}</p>
                   </div>
                   <div className="flex w-1/2 justify-end ">
-                    <button onClick={(e)=>{
-                      e.preventDefault();
-                      markdelete(item)
-                    }}>X</button>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        markdelete(item);
+                      }}
+                    >
+                      X
+                    </button>
                   </div>
                 </div>
               );
