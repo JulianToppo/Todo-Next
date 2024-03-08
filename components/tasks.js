@@ -17,7 +17,7 @@ const Tasks = (props) => {
   const taskname = useRef();
   const taskdescription = useRef();
 
-  const getData=async ()=>{
+  const getData = async () => {
     const items = await fetchTodoItemsFunc();
     const formatteditems = items.map((item) => ({
       _id: item._id.toString(),
@@ -26,7 +26,7 @@ const Tasks = (props) => {
       completed: item.completed,
     }));
     setTodoItemsList(formatteditems);
-  }
+  };
   const onAddSubmit = async (e) => {
     e.preventDefault();
     const name = taskname.current.value;
@@ -41,19 +41,20 @@ const Tasks = (props) => {
     console.log(formobj);
 
     await addTodoFunc(formobj);
-
-   await getData()
-  };
-
-  const markcompleted = async(item) => {
-   await updateTodoFunc(item._id);
-  
-  };
-
-  const markdelete = async(item) => {
-    await deleteTodoFunc(item._id);
-    await getData()
+await getData();
     
+  };
+
+  const markcompleted = async (item) => {
+    await updateTodoFunc(item._id);  
+    await getData();
+  };
+
+  const markdelete = async (item) => {
+    await deleteTodoFunc(item._id);
+    await getData();
+    
+  
   };
   return (
     <div className="flex h-full items-start pt-12 justify-center">
@@ -63,11 +64,8 @@ const Tasks = (props) => {
 
           <div className="flex flex-col">
             {todoItemsList.map((item) => {
-              return (
-                <div
-                  className="flex flex-row justify-around"
-                  key={item._id}
-                >
+              return  (!item.completed &&
+                <div className="flex flex-row justify-around" key={item._id}>
                   <div className="flex w-1/2 ">
                     {" "}
                     <div
